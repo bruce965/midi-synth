@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>MIDI Synth</title>
+
+	<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+	<label class="control">
+		<span class="control-label">Device:</span>
+		<select id="device" class="control-field" disabled></select>
+		<span id="device_indicator" class="indicator indicator-busy"></span>
+	</label>
+
+	<label class="control">
+		<span class="control-label">Channel:</span>
+		<select id="channel" class="control-field" disabled>
+			<option value="0">Channel 1</option>
+			<option value="1">Channel 2</option>
+			<option value="2">Channel 3</option>
+			<option value="3">Channel 4</option>
+			<option value="4">Channel 5</option>
+			<option value="5">Channel 6</option>
+			<option value="6">Channel 7</option>
+			<option value="7">Channel 8</option>
+			<option value="8">Channel 9</option>
+			<option value="9">Channel 10</option>
+			<option value="10">Channel 11</option>
+			<option value="11">Channel 12</option>
+			<option value="12">Channel 13</option>
+			<option value="13">Channel 14</option>
+			<option value="14">Channel 15</option>
+			<option value="15">Channel 16</option>
+		</select>
+		<span id="channel_indicator" class="indicator"></span>
+	</label>
+	
+	<label class="control">
+		<span class="control-label">Instrument:</span>
+		<select id="instrument" class="control-field" disabled></select>
+		<span id="instrument_indicator" class="indicator"></span>
+	</label>
+
+	<label class="control">
+		<span class="control-label">Volume:</span>
+		<input id="volume" type="range" min="0" max="127" value="85" class="control-field" disabled></select>
+		<span id="volume_indicator" class="indicator"></span>
+	</label>
+
+	<label class="control">
+		<span class="control-label">Sustain:</span>
+		<span id="sustain_indicator" class="indicator"></span>
+	</label>
+
+	<p>
+		MIDI Synth, GPL 3.0 by <a href="https://www.fabioiotti.com" target="_blank">Fabio Iotti</a><br>
+		<a href="https://github.com/surikov/webaudiofont" target="_blank">WebAudioFont</a>, GPL 3.0 by Srgy Surkv<br>
+		<a href="https://github.com/surikov/webaudiofont#parts-of-webaudiofont" target="_blank">Instruments</a> from free soundfonts
+	</p>
+
+	<script src='https://surikov.github.io/webaudiofont/npm/dist/WebAudioFontPlayer.js'></script>
+	<script src='https://surikov.github.io/webaudiofontdata/sound/0001_FluidR3_GM_sf2_file.js'></script>
+	<script src="./script.js"></script>
+</body>
+
+</html>
