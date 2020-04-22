@@ -340,7 +340,7 @@ class WebAudioMIDIPlayer {
 			const setChannel = (channelId) => {
 				const channel = midiPlayer.getChannel(+channelEl.value);
 				instrumentEl.value = `${channel.instrument}`;
-				sustainIndicatorEl.classList.toggle('indicator-ok', channel.sustain);
+				sustainIndicatorEl.classList.toggle('indicator-ok', !!channel.sustain);
 
 				channelEl.value = `${channelId}`;
 
