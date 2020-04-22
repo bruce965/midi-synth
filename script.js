@@ -225,6 +225,39 @@ class WebAudioMIDIPlayer {
 			let lastChannelIndicatorOtherChannelEventId = 0;
 			let chanelIndicatorIsActiveSameChannel = false;
 
+			let ephemeralStorage = {};
+
+			const save = (key, value) => {
+				try {
+					if (value === undefined)
+						localStorage.removeItem(key);
+					else
+						localStorage.setItem(key, JSON.stringify(value));
+				}
+				catch (e) {
+					if (value === undefined)
+						delete ephemeralStorage[key];
+					else
+						ephemeralStorage[key] = JSON.stringify(value);
+				}
+			};
+
+			const load = (key, fallback = undefined) => {
+				try {
+					const value = localStorage.getItem(key);
+					if (value == null)
+						return fallback;
+
+					return JSON.parse(value);
+				}
+				catch (e) {
+					if (ephemeralStorage[key] == null)
+						return fallback;
+
+					return JSON.parse(ephemeralStorage[key]);
+				}
+			};
+
 			const refreshMidiDevices = () => {
 
 				while (deviceEl.firstChild)
@@ -240,12 +273,10 @@ class WebAudioMIDIPlayer {
 					const option = document.createElement('option');
 					option.innerText = input.name;
 					option.value = input.id;
+					option.selected = currentInputDevice == input.id;
 
 					deviceEl.appendChild(option);
 				}
-
-				if (!currentInputDevice || currentInputDevice == '*')
-					setInputDevice('*');
 			};
 
 			const setInputDevice = (device) => {
@@ -255,7 +286,10 @@ class WebAudioMIDIPlayer {
 							input.removeEventListener('midimessage', handleMidiMessage);
 					}
 					else {
-						midi.inputs.get(currentInputDevice).removeEventListener('midimessage', handleMidiMessage);
+						const currentDevice = midi.inputs.get(currentInputDevice);
+						if (currentDevice) {
+							currentDevice.removeEventListener('midimessage', handleMidiMessage);
+						}
 					}
 
 					currentInputDevice = null;
@@ -268,10 +302,19 @@ class WebAudioMIDIPlayer {
 						input.addEventListener('midimessage', handleMidiMessage);
 				}
 				else {
-					midi.inputs.get(currentInputDevice).addEventListener('midimessage', handleMidiMessage);
+					const currentDevice = midi.inputs.get(currentInputDevice);
+					if (currentDevice) {
+						currentDevice.addEventListener('midimessage', handleMidiMessage);
+					}
+					else {
+						console.warn("Invalid device", currentInputDevice);
+						setInputDevice('*');
+					}
 				}
 
-				console.log(currentInputDevice);
+				deviceEl.value = device;
+
+				save('device', device);
 			};
 
 			const refreshInstruments = () => {
@@ -294,6 +337,16 @@ class WebAudioMIDIPlayer {
 				instrumentEl.value = `${midiPlayer.getChannel(channelId).instrument}`;
 			};
 
+			const setChannel = (channelId) => {
+				const channel = midiPlayer.getChannel(+channelEl.value);
+				instrumentEl.value = `${channel.instrument}`;
+				sustainIndicatorEl.classList.toggle('indicator-ok', channel.sustain);
+
+				channelEl.value = `${channelId}`;
+
+				save(`channel`, channelId);
+			};
+
 			const setInstrument = (channelId, instrumentId) => {
 				const instrument = player.loader.instrumentInfo(instrumentId);
 				const channel = midiPlayer.getChannel(channelId);
@@ -308,6 +361,11 @@ class WebAudioMIDIPlayer {
 					instrumentIndicatorEl.classList.toggle('indicator-ok', true);
 					instrumentIndicatorEl.classList.toggle('indicator-warn', false);
 				});
+
+				if (+channelEl.value == channelId)
+					instrumentEl.value = `${instrumentId}`;
+
+				save(`instrument_ch${channelId}`, instrumentId)
 			};
 
 			const setVolume = (volume) => {
@@ -316,6 +374,8 @@ class WebAudioMIDIPlayer {
 
 				volumeIndicatorEl.classList.toggle('indicator-ok', volume > 0);
 				volumeIndicatorEl.classList.toggle('indicator-warn', midiPlayer.volume > 1);
+
+				save(`volume`, volume);
 			}
 
 			const setSustain = (channel, active) => {
@@ -388,9 +448,7 @@ class WebAudioMIDIPlayer {
 			});
 
 			channelEl.addEventListener('change', () => {
-				const channel = midiPlayer.getChannel(+channelEl.value);
-				instrumentEl.value = `${channel.instrument}`;
-				sustainIndicatorEl.classList.toggle('indicator-ok', channel.sustain);
+				setChannel(+channelEl.value);
 			});
 
 			instrumentEl.addEventListener('change', () => {
@@ -402,14 +460,17 @@ class WebAudioMIDIPlayer {
 				setVolume(+volumeEl.value);
 			});
 			
-			refreshInstruments();
-
 			midi.addEventListener('statechange', refreshMidiDevices);
 			refreshMidiDevices();
 
-			setInstrument(+channelEl.value, midiPlayer.getChannel(+channelEl.value).instrument);
+			refreshInstruments();
 
-			setVolume(127 / 1.5);
+			setInputDevice(load(`device`, '*'));
+			setVolume(load(`volume`, Math.floor(127 / 1.5)));
+			setChannel(load(`channel`, 0));
+
+			for (let channel = 0; channel < 16; channel++)
+				setInstrument(channel, load(`instrument_ch${channel}`, 7));
 
 			deviceEl.disabled = false;
 			channelEl.disabled = false;
@@ -422,10 +483,11 @@ class WebAudioMIDIPlayer {
 		catch (e) {
 			console.error(e);
 			deviceIndicatorEl.classList.toggle('indicator-error', true);
+			deviceEl.querySelector('option').innerText = "Error";
 		}
 	}
 	else {
-		console.error("MIDI not supported on this browser.");
+		deviceEl.querySelector('option').innerText = "MIDI not supported";
 		deviceIndicatorEl.classList.toggle('indicator-error', true);
 	}
 })();

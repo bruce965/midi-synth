@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<meta charset="utf-8">
 	<title>MIDI Synth</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<link rel="stylesheet" href="./style.css">
 </head>
@@ -9,8 +12,10 @@
 
 	<label class="control">
 		<span class="control-label">Device:</span>
-		<select id="device" class="control-field" disabled></select>
-		<span id="device_indicator" class="indicator indicator-busy"></span>
+		<select id="device" class="control-field" disabled>
+			<option>Checking...</option>
+		</select>
+		<span id="device_indicator" class="indicator indicator-warn"></span>
 	</label>
 
 	<label class="control">
@@ -53,8 +58,8 @@
 		<span id="sustain_indicator" class="indicator"></span>
 	</label>
 
-	<p>
-		MIDI Synth, GPL 3.0 by <a href="https://www.fabioiotti.com" target="_blank">Fabio Iotti</a><br>
+	<p class="info">
+		<a href="https://github.com/bruce965/midi-synth" target="_blank">MIDI Synth</a>, GPL 3.0 by <a href="https://www.fabioiotti.com" target="_blank">Fabio Iotti</a><br>
 		<a href="https://github.com/surikov/webaudiofont" target="_blank">WebAudioFont</a>, GPL 3.0 by Srgy Surkv<br>
 		<a href="https://github.com/surikov/webaudiofont#parts-of-webaudiofont" target="_blank">Instruments</a> from free soundfonts
 	</p>
