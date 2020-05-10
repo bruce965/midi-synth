@@ -225,6 +225,8 @@ class WebAudioMIDIPlayer {
 			let lastChannelIndicatorOtherChannelEventId = 0;
 			let chanelIndicatorIsActiveSameChannel = false;
 
+			let refreshAudioContextStateListening = false;
+
 			let ephemeralStorage = {};
 
 			const save = (key, value) => {
@@ -447,6 +449,33 @@ class WebAudioMIDIPlayer {
 				}
 			};
 
+			const refreshAudioContextState = () => {
+				// try starting/resuming playback
+				if (audioContext.state == 'suspended')
+					audioContext.resume();
+
+				// set volume to "error" if audio playback is not enabled
+				volumeIndicatorEl.classList.toggle('indicator-error', audioContext.state != 'running');
+
+				// wait for a click or keypress, as it might be required to start playback
+				if (audioContext.state == 'suspended') {
+					if (!refreshAudioContextStateListening) {
+						refreshAudioContextStateListening = true;
+						window.addEventListener('keypress', refreshAudioContextState);
+						window.addEventListener('mousedown', refreshAudioContextState);
+						window.addEventListener('touchstart', refreshAudioContextState);
+					}
+				}
+				else {
+					if (refreshAudioContextStateListening) {
+						refreshAudioContextStateListening = false;
+						window.removeEventListener('keypress', refreshAudioContextState);
+						window.removeEventListener('mousedown', refreshAudioContextState);
+						window.removeEventListener('touchstart', refreshAudioContextState);
+					}
+				}
+			};
+
 			deviceEl.addEventListener('change', () => {
 				setInputDevice(deviceEl.value);
 			});
@@ -466,6 +495,9 @@ class WebAudioMIDIPlayer {
 			
 			midi.addEventListener('statechange', refreshMidiDevices);
 			refreshMidiDevices();
+
+			audioContext.addEventListener('statechange', refreshAudioContextState);
+			refreshAudioContextState();
 
 			refreshInstruments();
 
