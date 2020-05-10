@@ -277,6 +277,10 @@ class WebAudioMIDIPlayer {
 
 					deviceEl.appendChild(option);
 				}
+
+				// if listening on all MIDI devices, force a refresh
+				if (currentInputDevice == '*')
+					setInputDevice('*');
 			};
 
 			const setInputDevice = (device) => {
