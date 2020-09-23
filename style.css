@@ -11,13 +11,14 @@ html {
 }
 
 body {
-	min-width: 400px;
+	width: 100%;
+	max-width: 400px;
 
 	font-family: sans-serif;
 	font-size: 14px;
 
 	margin: 0;
-	padding: 0;
+	padding: 1em;
 }
 
 .info {
@@ -33,16 +34,19 @@ body {
 	margin-bottom: .2em;
 }
 .control-label {
+	flex-shrink: 0;
 	display: inline-block;
 	width: 100px;
 }
 .control-field {
 	flex-grow: 1;
+	width: 80px;
 	margin-right: .6em;
 }
 
 .indicator {
 	display: inline-block;
+	flex-shrink: 0;
 	box-sizing: border-box;
 	width: 1em;
 	height: 1em;
