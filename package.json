@@ -1,13 +1,13 @@
 {
-  "name": "midikeyboard_webfont",
+  "name": "midi-synth",
   "version": "1.1.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "Synth for MIDI keyboards directly from the browser",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:bruce965/midi-synth.git"
   },
-  "author": "",
-  "license": "MIT",
+  "author": "Fabio Iotti",
+  "license": "GPL-3.0-or-later",
   "devDependencies": {
     "@types/webmidi": "^2.0.4"
   }
