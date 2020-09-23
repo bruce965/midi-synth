@@ -15,7 +15,7 @@ Accepts input from MIDI devices and synthesises audio on the fly.
 * Global volume regulation
 * Sustain pedal
 
-Firefox does not support Web MIDI API yet (May 2020), please use Google Chrome.
+Firefox does not support Web MIDI API yet (September 2020), please use Google Chrome.
 
 If you would like to propose a feature or report a bug, please [open an issue on GitHub](https://github.com/bruce965/midi-synth/issues/new).
 

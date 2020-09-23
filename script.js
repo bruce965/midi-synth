@@ -333,7 +333,7 @@ class WebAudioMIDIPlayer {
 					const info = player.loader.instrumentInfo(i);
 
 					const option = document.createElement('option');
-					option.innerText = `${i+1}. ${info.title}`;
+					option.innerText = `${i+1}. ${info.title}, ${normalizeInstrumentKey(instrumentKeys[i])}`;
 					option.value = `${i}`;
 
 					instrumentEl.appendChild(option);
@@ -341,6 +341,30 @@ class WebAudioMIDIPlayer {
 
 				const channelId = +channelEl.value;
 				instrumentEl.value = `${midiPlayer.getChannel(channelId).instrument}`;
+			};
+
+			const instrumentKeyToId = (instrumentKey) => {
+				if (typeof instrumentKey == 'number')
+					return instrumentKey;  // retrocompatibility with version 1.0.0
+
+				const instrumentId = player.loader.instrumentKeys().indexOf(instrumentKey);
+				if (instrumentId != -1)
+					return instrumentId;
+
+				console.warn("Invalid instrument key", instrumentKey);
+				return 0;
+			};
+
+			const instrumentIdToKey = (instrumentId) => {
+				return player.loader.instrumentKeys()[instrumentId];
+			};
+
+			const normalizeInstrumentKey = (instrumentKey) => {
+				const match = /^(?:[0-9]+_)?(.*)(?:_sf2)+?(?:_file)?$/i.exec(instrumentKey);
+				if (!match)
+					return instrumentKey;
+					
+				return match[1].replace(/_/g, ' ');
 			};
 
 			const setChannel = (channelId) => {
@@ -371,7 +395,7 @@ class WebAudioMIDIPlayer {
 				if (+channelEl.value == channelId)
 					instrumentEl.value = `${instrumentId}`;
 
-				save(`instrument_ch${channelId}`, instrumentId)
+				save(`instrument_ch${channelId}`, instrumentIdToKey(instrumentId))
 			};
 
 			const setVolume = (volume) => {
@@ -506,7 +530,7 @@ class WebAudioMIDIPlayer {
 			setChannel(load(`channel`, 0));
 
 			for (let channel = 0; channel < 16; channel++)
-				setInstrument(channel, load(`instrument_ch${channel}`, 7));
+				setInstrument(channel, instrumentKeyToId(load(`instrument_ch${channel}`, '0001_FluidR3_GM_sf2_file')));
 
 			deviceEl.disabled = false;
 			channelEl.disabled = false;
