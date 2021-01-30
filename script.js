@@ -454,7 +454,7 @@ class WebAudioMIDIPlayer {
 		
 				switch (type) {
 					case 144:
-						midiNote.volume = velocity / 100;
+						midiNote.volume = Math.max(0.001, Math.min(4, Math.pow(velocity, 3) / Math.pow(80, 3)));
 						midiNote.active = true;
 						break;
 					case 128:
