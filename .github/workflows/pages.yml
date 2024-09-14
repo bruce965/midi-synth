@@ -1,0 +1,22 @@
+name: GitHub Pages
+on:
+  push:
+    tags: [ "v*" ]
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+    - uses: actions/checkout@v3
+    - name: Upload Pages artifact
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: "src/"
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v3
