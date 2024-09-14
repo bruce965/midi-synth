@@ -1,4 +1,9 @@
 
+:root {
+	color-scheme: dark light;
+	font-family: system-ui, sans-serif;
+}
+
 html {
 	display: flex;
 	justify-content: center;
@@ -6,16 +11,11 @@ html {
 
 	width: 100vw;
 	height: 100vh;
-
-	background: lightcyan;
 }
 
 body {
 	width: 100%;
 	max-width: 400px;
-
-	font-family: sans-serif;
-	font-size: 14px;
 
 	margin: 0;
 	padding: 1em;
